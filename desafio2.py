@@ -44,7 +44,7 @@ def sistema_bancario():
             novo_valor, lista = deposito(novo_valor, lista)
 
         elif operacao == "S":
-            novo_valor, lista, quantidade_saque = saque(novo_valor, quantidade_saque, saque_maximo, lista)
+            novo_valor, saque_maximo, quantidade_saque = saque(novo_valor=novo_valor, quantidade_saque=quantidade_saque, saque_maximo=saque_maximo, lista=lista)
 
         elif operacao == "E":
             extrato(novo_valor,lista)
@@ -54,7 +54,6 @@ def sistema_bancario():
             break
         else:
             print("Operação invalida, por favor inserir a operação desejada.\n")
-
 
 def criar_usuario(lista_cpf):
     nome = input("Informe a nome do novo usuário: ")
@@ -84,19 +83,23 @@ def nova_conta(lista_cpf):
         index = lista_cpf['CPF'].index(cpf_conta)
         lista_cpf['Conta'][index].append(conta)  
         print(f'\nNova conta criada com sucesso! Agência: 0001. Conta: {conta}.\n')
+        
+        print(lista_cpf)    
 
     else:
         print("CPF não encontrado, favor digitar um CPF valido ou criar um usuário")
     return lista_cpf
 
-def deposito(novo_valor, lista):
+def deposito(novo_valor, lista, /):
+    #O código "/" recebe argumentos por posição todos os caracteres anteriores
     deposito = int(input("Inserir o valor que deseja depositar: "))
     novo_valor += deposito
     print(f"O valor R${deposito:.2f} foi depositado \n")
     lista.append(deposito)
     return novo_valor, lista
     
-def saque(novo_valor, quantidade_saque, saque_maximo, lista):
+def saque(*, novo_valor, quantidade_saque, saque_maximo, lista):
+    # '*" para ser argumento keyword, todos após o * serão
     saque = float(input("Inserir o valor que deseja sacar: "))
     if novo_valor>=saque:
         
@@ -106,6 +109,7 @@ def saque(novo_valor, quantidade_saque, saque_maximo, lista):
                 quantidade_saque += 1
                 print(f"O valor R${saque:.2f} foi retirado \n")
                 lista.append(-saque)
+                return novo_valor, quantidade_saque, lista
                 
             else:
                 print("O valor máximo de saque permitido é R$500,00 \n")
@@ -113,15 +117,13 @@ def saque(novo_valor, quantidade_saque, saque_maximo, lista):
             print("Quantidade de saque diária excedida \n")
     else:
         print("Valor do saque superior ao saldo disponível \n")
-    return novo_valor, lista, quantidade_saque
-    
+
 def extrato(novo_valor,lista):
     print(f"Saldo: R${novo_valor:.2f} \n")
     print("Entradas e saídas:")
     for valor in lista:
         print(f'R${valor:.2f}')
+    return novo_valor, lista
+ 
 
-    
-    
 sistema_bancario()
-
